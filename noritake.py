@@ -117,7 +117,10 @@ class Display(object):
 	
 	custom_chars={}
 	def define_custom_char(self,char,data):
-		code=ord(char)
+		if isinstance(char,int):
+			code=char
+		else:
+			code=ord(char)
 		self.custom_chars[code]=data
 		self._esc(0x26)
 		newdata=[0]*5
@@ -128,7 +131,10 @@ class Display(object):
 		self.serial.write((0x01,code,code,5)+tuple(newdata))
 	
 	def delete_custom_char(self,char):
-		code=ord(char)
+		if isinstance(char,int):
+			code=char
+		else:
+			code=ord(char)
 		self._esc2(0x3f,0x01)
 		self.serial.write((code,))
 	

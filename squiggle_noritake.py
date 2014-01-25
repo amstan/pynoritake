@@ -6,29 +6,43 @@ from squiggle import Squiggle
 import numpy
 
 class NoritakeSquiggle(noritake.Display,Squiggle):
+	"""Inspiration: https://www.youtube.com/watch?v=nxFad7Rxw7Q&t=0m44s"""
 	empty_cell=numpy.zeros((8, 5))
 	filled_cell=numpy.ones((8, 5))
+	
 	def split(self,frame):
 		return numpy.array(numpy.split(numpy.array(numpy.split(frame,self.width,axis=-1)),self.height,axis=-2))
 	
 	def display(self):
 		characters=self.split(numpy.sum(self.storage,axis=0))
 		
-		special_char_start=ord("a")
-		
 		self.goto(0,0)
-		special_char=0
 		for y,row in enumerate(characters):
 			for x,cell in enumerate(row):
 				if numpy.array_equal(self.empty_cell,cell):
+					try:
+						del self.cache[(x,y)]
+					except KeyError:
+						pass
 					self.write(" ")
 				else:
-					if special_char==16:
-						print("Too many chars.")
-						continue
 					cell=cell!=0
-					self.define_custom_char(special_char_start+special_char,cell>0)
-					self.serial.write(bytes([special_char_start+special_char]))
+					
+					try:
+						#maybe this block used a special_char before
+						special_char=self.cache[(x,y)]
+					except KeyError:
+						try:
+							#new block, pick a new special_char
+							special_char=tuple(self.custom_characters_available-set(self.cache.values()))[0]
+						except IndexError:
+							print("Too many chars.")
+							self.write(" ")
+							continue
+					
+					self.define_custom_char(special_char,cell>0)
+					self.serial.write(bytes([special_char]))
+					self.cache[(x,y)]=special_char
 					special_char+=1
 	
 	def __init__(self,serial,width,height):
@@ -39,6 +53,10 @@ class NoritakeSquiggle(noritake.Display,Squiggle):
 		
 		for i in range(0x20,0xff):
 			self.delete_custom_char(i)
+		
+		self.cache={}
+		special_char_start=ord("a")
+		self.custom_characters_available={special_char_start+i for i in range(16)}
 		
 		#self.define_custom_char(" ",self.filled_cell>0)
 
@@ -55,4 +73,3 @@ if __name__=="__main__":
 		for i in range(10):
 			n.step()
 		n.display()
-		#time.sleep(0.1)

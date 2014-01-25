@@ -6,6 +6,8 @@ import numpy
 import random
 
 directions=[
+	[0,0],
+	
 	[0,-1],
 	[1,-1],
 	[1,0],
@@ -52,7 +54,7 @@ class Squiggle(object):
 		self.storage=numpy.roll(self.storage,-1,axis=0)
 		self.storage[-1]=numpy.zeros_like(self.storage[0])
 		
-		self.point+=numpy.random.randint(-1,2,size=(2))
+		self.point+=random.choice(directions)
 		#self.point+=[1,1]
 		self.point%=self.size
 		

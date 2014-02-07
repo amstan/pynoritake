@@ -170,131 +170,40 @@ if __name__=="__main__":
 		serial.Serial("/dev/ttyUSB0",38400),
 		24, 6
 	)
-	
 	n.set_cursor_style(cursors["None"])
 	
-	n.custom_chars_enabled=True
-	n.define_custom_char("0",booleanize("""
-		     
-		     
-		     
-		     
-		     
-		     
-		     
-		     
-	"""))
-	n.define_custom_char("1",booleanize("""
-		     
-		     
-		     
-		     
-		     
-		     
-		     
-		#####
-	"""))
-	n.define_custom_char("2",booleanize("""
-		     
-		     
-		     
-		     
-		     
-		     
-		#####
-		#####
-	"""))
-	n.define_custom_char("3",booleanize("""
-		     
-		     
-		     
-		     
-		     
-		#####
-		#####
-		#####
-	"""))
-	n.define_custom_char("4",booleanize("""
-		     
-		     
-		     
-		     
-		#####
-		#####
-		#####
-		#####
-	"""))
-	n.define_custom_char("5",booleanize("""
-		     
-		     
-		     
-		#####
-		#####
-		#####
-		#####
-		#####
-	"""))
-	n.define_custom_char("6",booleanize("""
-		     
-		     
-		#####
-		#####
-		#####
-		#####
-		#####
-		#####
-	"""))
-	n.define_custom_char("7",booleanize("""
-		     
-		#####
-		#####
-		#####
-		#####
-		#####
-		#####
-		#####
-	"""))
-	n.define_custom_char("8",booleanize("""
-		 ### 
-		#####
-		#####
-		#####
-		#####
-		#####
-		#####
-		#####
-	"""))
-	n.define_custom_char("9",booleanize("""
-		#####
-		#####
-		#####
-		#####
-		#####
-		#####
-		#####
-		#####
-	"""))
+	n.brightness=100
 	
-	line1=[0]*24
-	line2=[0]*24
-	i=0
-	while(1):
-		line1.pop(0)
-		line1.append(random.randint(0,8))
-		n.goto(0,0)
-		for c in line1:
-			n.write(str(c))
-		
-		line2.pop(0)
-		line2.append(int(round((math.sin(i/5)/2+0.5)*8+1)))
-		n.goto(0,1)
-		for c in line2:
-			n.write(str(c))
-		
-		i+=1
-		n.goto(0,5)
-		n.write(str(datetime.datetime.now())[:-2])
-		#time.sleep(0.05)
+	n.set_char_brightness(2)
+	
+	n.goto(0,0)
+	n.write("OneTwoThreeFourFiveSix\n")
+	n.write("Seven")
+	
+	n.set_char_brightness(8)
+	n.write("Eight")
+	n.set_char_brightness(2)
+	
+	n.write("NineTen\n")
+	n.write("ElevenTwelveTwenty\n")
+	n.write("ThirtyFourty")
+	
+	n.set_char_brightness(8)
+	n.write("Fifty")
+	n.set_char_brightness(2)
+	
+	n.write("OneTwo\n")
+	n.write("ThreeFourFiveSix")
+	
+	n.set_char_brightness(8)
+	n.write("Seven\n")
+	n.set_char_brightness(2)
+	
+	n.write("EightNineAM")
+	n.set_char_brightness(8)
+	n.write("PM")
+	
+	#time.sleep(0.05)
 	
 	#n.write(sys.version+"\n")
 	#n.write(repr(datetime.datetime.now()))

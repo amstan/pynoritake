@@ -67,17 +67,16 @@ class Squiggle(object):
 		
 		self.storage[-1][tuple(self.point)]=2
 
-	def simplecv_display(self):
-		import SimpleCV
+	def flatten(self):
+		#import SimpleCV
 		todisplay=numpy.zeros_like(self.storage[0])
 		n=len(self.storage)
 		for i,frame in enumerate(self.storage):
 			frame=frame>0
 			todisplay+=frame*((i/(n-1))*255)
 			#todisplay+=frame*255
-		todisplay=numpy.transpose(todisplay)
 		todisplay=numpy.clip(todisplay,0,255)
-		SimpleCV.Image(todisplay).scale(5,interpolation=SimpleCV.cv2.INTER_NEAREST).show()
+		return todisplay
 
 if __name__=="__main__":
 	import time
@@ -87,7 +86,18 @@ if __name__=="__main__":
 		height=6*8,
 	)
 	
-	while 1:
-		s.simplecv_display()
-		for i in range(10):
-			s.step()
+	import numpy as np
+	import matplotlib.pyplot as plt
+	import matplotlib.animation
+	fig = plt.figure()
+	ax = plt.axes(xlim=(0, s.size[1]), ylim=(0, s.size[0]))
+	im=plt.imshow(s.flatten(),interpolation='none')
+	
+	# animation function.  This is called sequentially
+	def animate(i):
+		s.step()
+		im.set_array(s.flatten())
+		return [im]
+	
+	anim = matplotlib.animation.FuncAnimation(fig, animate, frames=None, interval=0, blit=True)
+	plt.show()

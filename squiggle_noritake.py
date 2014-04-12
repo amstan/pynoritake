@@ -4,6 +4,7 @@
 import noritake
 from squiggle import Squiggle
 import numpy
+import time
 
 class NoritakeSquiggle(noritake.Display,Squiggle):
 	"""Inspiration: https://www.youtube.com/watch?v=nxFad7Rxw7Q&t=0m44s"""
@@ -14,11 +15,12 @@ class NoritakeSquiggle(noritake.Display,Squiggle):
 		return numpy.array(numpy.split(numpy.array(numpy.split(frame,self.width,axis=-1)),self.height,axis=-2))
 	
 	def display(self):
-		characters=self.split(numpy.sum(self.storage,axis=0))
+		characters=self.split(self.storage)
 		
 		self.goto(0,0)
 		for y,row in enumerate(characters):
 			for x,cell in enumerate(row):
+				#self.goto(x,y)
 				if numpy.array_equal(self.empty_cell,cell):
 					try:
 						del self.cache[(x,y)]
@@ -36,7 +38,7 @@ class NoritakeSquiggle(noritake.Display,Squiggle):
 							#new block, pick a new special_char
 							special_char=tuple(self.custom_characters_available-set(self.cache.values()))[0]
 						except IndexError:
-							print("Too many chars.")
+							#print("Too many chars.")
 							self.write(" ")
 							continue
 					
@@ -46,7 +48,7 @@ class NoritakeSquiggle(noritake.Display,Squiggle):
 					special_char+=1
 	
 	def __init__(self,serial,width,height):
-		Squiggle.__init__(self,width=width*5,height=height*8,length=200)
+		Squiggle.__init__(self,width=width*5,height=height*8,length=100)
 		noritake.Display.__init__(self,serial,width,height)
 		self.set_cursor_style(noritake.cursors["None"])
 		self.custom_chars_enabled=True
@@ -70,6 +72,6 @@ if __name__=="__main__":
 	)
 	
 	while(1):
-		for i in range(10):
+		for i in range(1):
 			n.step()
 		n.display()
